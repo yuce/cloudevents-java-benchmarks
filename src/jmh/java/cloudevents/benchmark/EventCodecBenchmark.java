@@ -1,11 +1,12 @@
 package cloudevents.benchmark;
 
+import io.cloudevents.core.provider.EventFormatProvider;
 import io.cloudevents.jackson.JsonFormat;
-import io.scaleplan.cloudevents.codecs.impl.JsonDecoder;
-import io.scaleplan.cloudevents.codecs.impl.JsonEncoder;
+import io.scaleplan.spce.codecs.Avro;
+import io.scaleplan.spce.codecs.AvroSpce;
+import io.scaleplan.spce.codecs.Json;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Blackhole;
-import io.cloudevents.core.provider.EventFormatProvider;
 
 import java.util.concurrent.TimeUnit;
 
@@ -15,10 +16,10 @@ import java.util.concurrent.TimeUnit;
 @Warmup(iterations = 2)
 public class EventCodecBenchmark {
     private static final byte[] text = sampleEventText();
-//    private static final Event sampleEvent = sampleScalePlanEventWithOptionalAttributes();
-    private static final JsonDecoder decoder = JsonDecoder.create();
-    private static final JsonEncoder encoder = JsonEncoder.create();
-    private static final io.scaleplan.cloudevents.CloudEvent scaleplanEvent = decoder.decode(text);
+    //    private static final Event sampleEvent = sampleScalePlanEventWithOptionalAttributes();
+    private static final io.scaleplan.spce.CloudEvent scaleplanEvent = Json.decode(text);
+    private static final byte[] scaleplanAvroEncodedEvent = Avro.encode(scaleplanEvent);
+    private static final byte[] getScaleplanAvroAltEncodedEvent = AvroSpce.encode(scaleplanEvent);
 
     // CloudEvents SDK stuff
     private static final JsonFormat format = getFormat();
@@ -26,22 +27,44 @@ public class EventCodecBenchmark {
 
     @Benchmark
     public void benchmarkScalePlanDecodeEvent(Blackhole blackhole) {
-        blackhole.consume(decoder.decode(text));
+        blackhole.consume(Json.decode(text));
     }
 
+    /*
     @Benchmark
     public void benchmarkCloudEventsSdkDecodeEvent(Blackhole blackhole) {
         blackhole.consume(format.deserialize(text));
     }
+     */
+
+    @Benchmark
+    public void benchmarkAvroDecodeEvent(Blackhole blackhole) {
+        blackhole.consume(Avro.decode(scaleplanAvroEncodedEvent));
+    }
+
+    @Benchmark
+    public void benchmarkAvroAltDecodeEvent(Blackhole blackhole) {
+        blackhole.consume(AvroSpce.decode(getScaleplanAvroAltEncodedEvent));
+    }
 
     @Benchmark
     public void benchmarkScalePlanEncodeEvent(Blackhole blackhole) {
-        blackhole.consume(encoder.encode(scaleplanEvent));
+        blackhole.consume(Json.encode(scaleplanEvent));
     }
 
     @Benchmark
     public void benchmarkCloudEventsSdkEncodeEvent(Blackhole blackhole) {
         blackhole.consume(format.withForceJsonDataToBase64().serialize(sdkEvent));
+    }
+
+    @Benchmark
+    public void benchmarkAvroEncodeEvent(Blackhole blackhole) {
+        blackhole.consume(Avro.encode(scaleplanEvent));
+    }
+
+    @Benchmark
+    public void benchmarkAvroAltEncodeEvent(Blackhole blackhole) {
+        blackhole.consume(AvroSpce.encode(scaleplanEvent));
     }
 
     /*
@@ -80,6 +103,7 @@ public class EventCodecBenchmark {
                 "  \"datacontenttype\": \"application/json\",\n" +
                 "  \"data_base64\": \"e30=\",\n" +
                 "  \"subject\": \"sub\",\n" +
+                "  \"external1\": \"foobar\",\n" +
                 "  \"time\": \"2018-04-26T14:48:09+02:00\"\n" +
                 "}";
         return text.getBytes();
@@ -88,6 +112,5 @@ public class EventCodecBenchmark {
     private static JsonFormat getFormat() {
         return (JsonFormat) EventFormatProvider.getInstance().resolveFormat(JsonFormat.CONTENT_TYPE);
     }
-
 
 }

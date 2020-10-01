@@ -7,8 +7,8 @@ plugins {
 }
 
 ext {
-    cloudEventsScalePlanVersion = '0.2.13'
-    cloudEventsSdkVersion = '2.0.0-milestone2'
+    cloudEventsScalePlanVersion = '0.3.0'
+    cloudEventsSdkVersion = '2.0.0-milestone3'
 }
 
 group 'io.scaleplan'
@@ -21,8 +21,6 @@ repositories {
     maven {
         url = 'https://maven.pkg.github.com/scaleplandev/maven'
         // make sure ~/.gradle/gradle.properties exists with the following content:
-        // scaleplan_molecula_user=USER_NAME
-        // scaleplan_molecula_pass=PASSWORD
         credentials {
             username "$scaleplan_user"
             password "$scaleplan_pass"
@@ -31,7 +29,7 @@ repositories {
 }
 
 dependencies {
-    implementation "io.scaleplan:cloudevents:$cloudEventsScalePlanVersion"
+    implementation "io.scaleplan:spce:$cloudEventsScalePlanVersion"
     implementation "io.cloudevents:cloudevents-core:$cloudEventsSdkVersion"
     implementation "io.cloudevents:cloudevents-json-jackson:$cloudEventsSdkVersion"
 
@@ -47,5 +45,5 @@ dependencies {
 jmh {
     duplicateClassesStrategy = 'warn'
     jmhVersion = '1.22'
-    profilers = ['perf']
+//    profilers = ['perf']
 }

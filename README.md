@@ -1,6 +1,6 @@
 # CloudEvents Java Benchmarks
 
-Benchmarks of CloudEvent implementations for Java.
+Benchmarks of CloudEvents implementations for Java.
 
 ## Usage
 

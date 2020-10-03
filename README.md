@@ -45,7 +45,7 @@ Using CloudEvents 1.0 Avro schema at https://github.com/cloudevents/spec/blob/v1
 
 ### Avro SPCE
 
-Using SPCE 1.0 Avro schema at:
+Using SPCE 1.0 Avro schema at: https://github.com/scaleplandev/spce-java/blob/master/etc/cloudevents_spce_spec.avsc
 
 * `benchmarkAvroSpceDecodeEvent`: Decode a single event
 * `benchmarkAvroSpceEncodeEvent`: Encode a single event

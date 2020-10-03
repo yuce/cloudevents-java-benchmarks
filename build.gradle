@@ -18,12 +18,9 @@ sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
-    maven {
-        url = 'https://maven.pkg.github.com/scaleplandev/maven'
-        // make sure ~/.gradle/gradle.properties exists with the following content:
-        credentials {
-            username "$scaleplan_user"
-            password "$scaleplan_pass"
+    repositories {
+        maven {
+            url  "https://dl.bintray.com/scaleplan/maven"
         }
     }
 }
